@@ -138,9 +138,9 @@ class CodeSnapshot(Callback):
     def get_file_list(self):
         return [
             b.decode()
-            for b in set(subprocess.check_output('git ls-files -- ":!:configs/*"', shell=True).splitlines())
+            for b in set(subprocess.check_output(["git", "ls-files", "--", ":!:configs/*"], shell=False).splitlines())
             | set(  # hard code, TODO: use config to exclude folders or files
-                subprocess.check_output("git ls-files --others --exclude-standard", shell=True).splitlines()
+                subprocess.check_output(["git", "ls-files", "--others", "--exclude-standard"], shell=False).splitlines()
             )
         ]
 
