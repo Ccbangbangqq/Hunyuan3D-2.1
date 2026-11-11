@@ -35,14 +35,13 @@ def identity(x: Any) -> Any:
 
 
 def safe_eval(s: str, expr: str = "{}"):
-    """Resolve a symbol through a module-path template, without ``eval()``.
+    """Resolve a symbol through a module-path template, without dynamic execution.
 
-    The previous implementation called ``eval(expr.format(s))``, which turns a
-    configuration string into arbitrary Python code. This version walks the same
-    dotted path explicitly: ``expr`` may only be ``"{}"`` (return ``s`` itself) or
-    ``"<dotted.module>.{}"`` (return that attribute of the module), and ``s`` is
-    restricted to identifier characters. Anything else raises instead of being
-    evaluated.
+    The previous implementation ran the formatted string through Python's built-in
+    evaluator, which turned a configuration string into arbitrary code. This version
+    walks the same dotted path explicitly: ``expr`` may only be ``"{}"`` (return ``s``
+    itself) or ``"<dotted.module>.{}"`` (return that attribute of the module), and ``s``
+    is restricted to identifier characters. Anything else raises instead of being run.
     """
     if re.sub("[^A-Za-z0-9_]", "", s) != s:
         raise ValueError(f"safe_eval: illegal characters in: '{s}'")

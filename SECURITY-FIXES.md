@@ -3,6 +3,9 @@
 > 本分支相对上游 `Tencent-Hunyuan/Hunyuan3D-2.1@main` 只做安全加固，不改变模型结构与推理逻辑。
 > 内网代码扫描报出的 2 个 critical（shell process）已修复，同时清掉了 3 处同类写法。
 > All changes are shell-injection / dynamic-exec hardening only; model code and behaviour are untouched.
+>
+> **注**：第 2 节“修复前”列是为审计保留的代码摘录，仅存在于本 Markdown 中，不参与构建与执行。
+> 若扫描器也扫描 `.md`，这些摘录可能被 grep 命中；届时直接删掉该列即可，不影响代码（代码已全部修复）。
 
 ## 1. 背景
 
