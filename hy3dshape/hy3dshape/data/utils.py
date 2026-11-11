@@ -35,10 +35,27 @@ def identity(x: Any) -> Any:
 
 
 def safe_eval(s: str, expr: str = "{}"):
-    """Evaluate the given expression more safely."""
+    """Resolve a symbol through a module-path template, without ``eval()``.
+
+    The previous implementation called ``eval(expr.format(s))``, which turns a
+    configuration string into arbitrary Python code. This version walks the same
+    dotted path explicitly: ``expr`` may only be ``"{}"`` (return ``s`` itself) or
+    ``"<dotted.module>.{}"`` (return that attribute of the module), and ``s`` is
+    restricted to identifier characters. Anything else raises instead of being
+    evaluated.
+    """
     if re.sub("[^A-Za-z0-9_]", "", s) != s:
         raise ValueError(f"safe_eval: illegal characters in: '{s}'")
-    return eval(expr.format(s))
+
+    if expr == "{}":
+        return s
+
+    prefix, placeholder, suffix = expr.partition("{}")
+    if not placeholder or suffix != "" or not prefix.endswith("."):
+        raise ValueError(f"safe_eval: unsupported expression template: '{expr}'")
+
+    module = importlib.import_module(prefix[:-1])
+    return getattr(module, s)
 
 
 def lookup_sym(sym: str, modules: list):

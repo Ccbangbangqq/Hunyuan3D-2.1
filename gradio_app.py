@@ -66,7 +66,13 @@ if ENV == 'Huggingface':
     """
     import os, spaces, subprocess, sys, shlex
     print("cd /home/user/app/hy3dgen/texgen/differentiable_renderer/ && bash compile_mesh_painter.sh")
-    os.system("cd /home/user/app/hy3dgen/texgen/differentiable_renderer/ && bash compile_mesh_painter.sh")
+    # No shell: cwd + argv instead of "cd ... && bash ..." so nothing is parsed by sh.
+    build = subprocess.run(
+        ["bash", "compile_mesh_painter.sh"],
+        cwd="/home/user/app/hy3dgen/texgen/differentiable_renderer",
+        check=False,
+    )
+    print(f'compile_mesh_painter.sh exit code: {build.returncode}')
     print('install custom')
     subprocess.run(shlex.split("pip install custom_rasterizer-0.1-cp310-cp310-linux_x86_64.whl"),
                    check=True)

@@ -13,6 +13,7 @@
 # by Tencent in accordance with TENCENT HUNYUAN COMMUNITY LICENSE AGREEMENT.
 
 import os
+import subprocess
 import tempfile
 from typing import Union
 
@@ -191,7 +192,12 @@ class MeshSimplifier:
         with tempfile.NamedTemporaryFile(suffix='.obj', delete=False) as temp_input:
             with tempfile.NamedTemporaryFile(suffix='.obj', delete=False) as temp_output:
                 mesh.export(temp_input.name)
-                os.system(f'{self.executable} {temp_input.name} {temp_output.name}')
+                # No shell: pass the executable and the two paths as separate argv
+                # entries so temp-file names can never be interpreted by a shell.
+                subprocess.run(
+                    [self.executable, temp_input.name, temp_output.name],
+                    check=True,
+                )
                 ms = trimesh.load(temp_output.name, process=False)
                 if isinstance(ms, trimesh.Scene):
                     combined_mesh = trimesh.Trimesh()
